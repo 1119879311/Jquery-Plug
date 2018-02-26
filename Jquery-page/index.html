@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/page.css" />
+	</head>
+	
+	<body>
+		<ul class="page" id="page"></ul>
+	</body>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/Jquery-myPage.js"></script>
+	<script>
+//	 url: undefined,//数据,ajax请求数据路径
+//  currPage: 2,//当前页码,
+//  sPageSun: 6,//最多显示页面码数
+//  resultdata: 2, //每页返回显示的数据条数
+//  pagetype: "server",//分页方式：客户端clients， 服务端：server 
+//  queryParms: "",//服务器的参数，如果是server 会默认发送 默认limit:当前页面, offset:查询的条数
+//  jumpbool: true,//是否显示用户输入跳转
+//  bendbool: true, //是否显示首尾页显示
+//  callback: function(){},
+//  noData: false, //开启无数据测试，
+//  onClick:function(){}
+	
+		$(function(){
+			$("#page").myPage({
+				url:"data/data.json",
+				currPage:1,
+				sPageSun:100,
+				resultdata:3,
+				pagetype: "clients",
+				jumpbool:true,
+				bendbool:true,
+				callback:function(result){
+					console.log(result)
+				}
+			})
+		})
+	</script>
+</html>

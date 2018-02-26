@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title></title>
+	<link rel="stylesheet" href="css/mysilder.css" />
+</head>
+<body>
+	<div class="slider">
+		<div class="silder_main">
+			<ul class="silder_box">
+				<li class="silder_item"><a href="###"><img src="image/banner1.jpg"></a></li>
+				<li class="silder_item"><a href="###"><img src="image/banner2.jpg"></a></li>
+				<li class="silder_item"><a href="###"><img src="image/banner3.jpg"></a></li>
+			</ul>
+		</div>
+		<div class="silder_nav">
+			<ul >
+				<li class="nav-btn"></li>
+				<li class="nav-btn"></li>
+				<li class="nav-btn"></li>
+			</ul>
+		</div>
+		<span class="prev-btn"><img src="image/prev.png"></span>
+		<span class="next-btn"><img src="image/next.png"></span>
+	</div>
+	
+	<script type="text/javascript" src="js/jquery-1.11.2.min.js" ></script>
+	<script type="text/javascript" src="js/jquery_mysilders5.17.0.js" ></script>
+	<script>
+	  
+//	 		
+//	 "width":wids, //容器的宽度
+//	  "height":600,  //容器的高度
+//	  "pricWid":1920,//图片的真实宽度，当图片宽大于当前窗口的宽度
+//	  "prichei":600,  //图片的高度
+//	  "events":"mouseover",//小导航的事件
+//	  "itmeIndex":1,//当前显示那一张
+//	   "speend":500,//完成播放的时间
+//	   "dedaly":1500,//每间隔多长时间播放一次
+//	  "drection":"left",//自动播放的方向
+//	  "autoplay":true,//是否自动播放
+//	  "bools":true,//播放开关
+//	  "timers":null//定时器
+//	        			
+	 	$(".slider").mySilder({
+//	 		"width":"100%",
+	 		 "pricWid":1920,
+	 		 "events":"mouseover"
+	 	});
+	
+	
+	</script>
+</body>
+</html>

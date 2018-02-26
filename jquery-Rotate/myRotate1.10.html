@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/myrotate.css" />
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-myRotate-1.10.js"></script>
+	</head>
+	<body>
+		<div class="poster-main">
+			<ul class="poster-list">
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+			</ul>
+			<div class="poster-btn poster-prewbtn"></div>
+			<div class="poster-btn poster-nextbtn"></div>
+		</div>
+		
+		<div class="poster-main">
+			<ul class="poster-list">
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+				<li class="poster-item"></li>
+			</ul>
+			<div class="poster-btn poster-prewbtn"></div>
+			<div class="poster-btn poster-nextbtn"></div>
+		</div>
+		<script>
+			$(function(){
+				$(".poster-main:first").myRotate({
+					"width":1000,
+					"itemWid":640,
+					
+					
+				});
+				
+				$(".poster-main:nth-child(2)").myRotate({
+					"vertival":'top'
+				});
+			})
+		</script>
+	</body>
+</html>
