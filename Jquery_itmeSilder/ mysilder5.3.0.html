@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{margin: 0;padding: 0;}
+			ul,li{list-style: none;}
+			
+			.mysilder .mysilder_main ul li img{display: block;width:100%;height:100%;}
+			
+			.mysilder_prev.row,.mysilder_next.row{
+				display:block;position: absolute;width: 50px;height: 100%;top:0;cursor: pointer;
+			}
+			.mysilder_prev.row{left:0;background:gray url(img/prev.png) no-repeat 50% 50%;background-size: 80%;}
+			.mysilder_next.row{right:0;background:gray url(img/next.png) no-repeat 50% 50%;background-size: 80%;}
+			
+			.mysilder_prev.column,.mysilder_next.column{display:block;position: absolute;width: 100%;height: 50px;left:0;cursor: pointer;}
+			.mysilder_prev.column{top:0;background:gray}
+			.mysilder_next.column{bottom:0;background:gray }
+			
+			
+			.mysilder_radius.column {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				position: absolute;
+				right: 30px;
+				height: 100%;
+				top:0}
+			.mysilder_radius.row {
+				display: flex;
+				justify-content: center;
+				flex-direction: row;
+				position: absolute;
+				width: 100%;
+				bottom:30px}
+			.mysilder_radius.row .radius_itme{margin-left: 3px;}
+			.mysilder_radius .radius_itme{display: block;width: 20px;height: 20px;border-radius: 50%;background: red;cursor: pointer;margin: 3px 0;}
+			.mysilder_radius .radius_itme.active{background: blue;}
+		</style>
+	</head>
+	<body>
+		<div class="mysilder" id="mysilder">
+			<div class="mysilder_main">
+				<ul class="mysilder_ul">
+					<li class="mysilder_item"><img src="img/4.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/5.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/6.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/7.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/8.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/9.jpg"/></li>
+					<li class="mysilder_item"><img src="img/10.jpg"/></li>
+					<li class="mysilder_item"><img src="img/11.jpg"/></li>
+					<li class="mysilder_item"><img src="img/12.jpg"/></li>					
+				</ul>
+			</div>
+			<span class="mysilder_prev"></span>
+			<span class="mysilder_next"></span>
+		</div>
+		<div class="mysilder" id="sild">
+			<div class="mysilder_main">
+				<ul class="mysilder_ul">
+					<li class="mysilder_item"><img src="img/4.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/5.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/6.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/7.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/8.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/9.jpg"/></li>
+					<li class="mysilder_item"><img src="img/10.jpg"/></li>
+					<li class="mysilder_item"><img src="img/11.jpg"/></li>
+					<li class="mysilder_item"><img src="img/12.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/6.jpg"/></li>
+					<li  class="mysilder_item"><img src="img/7.jpg"/></li>
+				</ul>
+			</div>
+			<!--<span class="mysilder_prev"></span>
+			<span class="mysilder_next"></span>-->
+			<ul class="mysilder_radius">
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+				<li class="radius_itme"></li>
+			</ul>
+		</div>
+		
+	</body>
+	<script type="text/javascript" src="js/jquery-1.8.3.min.js" ></script>
+	<script type="text/javascript" src="js/jquery.mySilder_5_4.js" ></script>
+	<script>
+		$(function(){
+			
+//			"width":800,//容器的总宽
+//			"height":300,//容器的高度
+//			"drectype":"row",//row 水平方向 column:垂直方向
+//			"clumn":20,//每一帧的间距
+//			"viewUnber":3,//当前可视显示张数
+//			"itmeUnber":1,//每次滑动的帧数
+//			"speend":500,//完成播放的时间
+//			"dedaly":1500,//每间隔多长时间播放一次
+//			"drection":"left",//自动播放的方向
+//			"autoplay":false,//是否自动播放
+//			"btnwid":50  按钮宽,
+//			radiusEvent:"",//如果有小圆点，可以设置事件，click,movserover...,默认没有
+			$("#mysilder").mySilder({
+				"width":"100%",
+				"viewUnber":5,
+				"itmeUnber":3,
+				"clumn":10
+			})
+			
+			$("#sild").mySilder({
+				"drectype":"column",
+				"width":"100%",//容器的总宽
+				"height":"100%",
+//				"clumn":20,//每一帧的间距
+				"viewUnber":1,//当前可视显示张数
+				"itmeUnber":2,//每次滑动的帧数
+				"btnwid":0,
+				"radiusEvent":"mouseover"
+			})
+		})
+	</script>
+</html>
