@@ -16,25 +16,36 @@
 			"width":1000,
 			"height":300,
 			"itemWid":640,
-			"autoPlay":true,
-			"detaly":1500,
+			"autoPlay":false,
+			"detaly":3000,
 			"speed":300,
 			"vertival":"middel",//middel,top,bottom
-			"scale":0.8
+			"scale":0.8,
+			"callback":function(){},
+			"getIndex":function(){}
 		};
 		
 		$.extend(setting,options);
 		
 		//方法实现
 		var sliderRotate = {
+			//添加索引
+			addIndex:function(){
+				postItem.each(function(index,ele){
+					$(ele).attr('data-index',index+1)
+					
+				})
+			},
+			
 			//初始化位置
 			init:function(){
+				this.addIndex();
 			 //左右两边的离中间的帧的距离
 			 var tw = (setting.width -setting.itemWid)/2;
 			 //左右两边的帧数和每帧的间距,最高的层级z-index
-			 var lrItemSize = Math.floor(postItem.size()/2);
+			 var lrItemSize = Math.floor(postItem.length/2);
 			 var gap = tw/lrItemSize;
-			 var itemZindex = postItem.size()-lrItemSize;
+			 var itemZindex = postItem.length-lrItemSize;
 			 //左右两边的帧数
 			  var  leftItem= postItem.slice(itemZindex);
 			 var  rigItem= postItem.slice(1,itemZindex);
@@ -46,8 +57,11 @@
 			 postList.css({"width":setting.width,"height":setting.height});
 			 postItem.css({"width":setting.itemWid,"height":setting.height});
 			 posterFirst.css({"width":setting.itemWid,"height":setting.height,"left":tw,"z-index":lrItemSize});
+			 posterFirst.addClass("poster-item-active")
 			 posterPrewBtn.css({"width":tw,"height":setting.height,"z-index":itemZindex});
 			 posterNextBtn.css({"width":tw,"height":setting.height,"z-index":itemZindex})
+			 
+			 setting.getIndex({index:posterFirst.attr("data-index"),lr:"left"})
 			 
 			 //右边的位置，先保存第一帧的宽高,层次 
 			 var rw = setting.itemWid,
@@ -61,7 +75,7 @@
 					$(this).css({
 						"width":rw,
 						"height":rh,
-						"opacity":1/(++index),
+//						"opacity":1/(++index),
 						"z-index":ropac,
 						"left":lefts,
 						"top":sliderRotate.setVertival(rh)
@@ -76,7 +90,7 @@
 				 	$(this).css({
 						"width":lw,
 						"height":lh,
-						"opacity":1/lftopa,
+//						"opacity":1/(++index),
 						"z-index":index,
 						"left":gap*index,
 						"top":sliderRotate.setVertival(lh)
@@ -101,13 +115,36 @@
 				}
 				return top;
 			},
+			setCurrenItme:function(lft){
+				var currenItme = self.find(".poster-item-active");
+				postItem.removeClass("poster-item-active");
+				if(lft =="right"){
+					var prev = currenItme.prev().get(0)?currenItme.prev():posterLast;
+				}else if(lft =="left"){
+					var prev = currenItme.next().get(0)?currenItme.next():posterFirst;
+				}else{
+					var prev = currenItme.next().get(0)?currenItme.next():posterFirst;
+					
+				}
+				lft = lft?lft:'right'
+				prev.addClass("poster-item-active");
+				setting.getIndex({index:prev.attr("data-index"),lr:lft})
+				
+			},
 			//动画旋转
 			animateRotate:function(ltf){
-				postItem.each(function(){
+				//获取当前显示的item
+				
+				sliderRotate.setCurrenItme(ltf);
+				
+				postItem.each(function(index,ele){
 					if(ltf =="left"){
 						var prev = $(this).prev().get(0)?$(this).prev():posterLast;
 					}else if(ltf =="right"){
 						var prev = $(this).next().get(0)?$(this).next():posterFirst;
+					}else{
+						var prev = $(this).prev().get(0)?$(this).prev():posterLast;
+						
 					}
 					 var width = prev.css("width"),
 					     height = prev.css("height"),
@@ -115,11 +152,12 @@
 					     opacity = prev.css("opacity"),
 					     top = prev.css("top"),
 					     left = prev.css("left");
+					
 					$(this).animate({
 						 "height":height,
 						 "width":width,
 						 "z-index":zindex,
-						 "opacity":opacity,
+//						 "opacity":opacity,
 						 "top":top,
 						 "left":left	  
 					},setting.speed,function(){
@@ -143,6 +181,7 @@
 		
 		sliderRotate.init();
 		sliderRotate.aotuRotatePlay();
+		setting.callback(sliderRotate);
 		posterNextBtn.click(function(){
 			if(posterBool){
 				posterBool = false;
@@ -164,6 +203,5 @@
 				sliderRotate.aotuRotatePlay();
 			})
 		}
-	
-	
+	    
 })(jQuery)
