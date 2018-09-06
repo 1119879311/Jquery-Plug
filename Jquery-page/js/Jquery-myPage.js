@@ -3,33 +3,54 @@
         var self = this;
         var setting = {
             url: undefined,//数据,ajax请求数据路径
-            currPage: 2,//当前页码,
+            type:"get",
+            currPage: 1,//当前页码,
             sPageSun: 6,//最多显示页面码数
-            resultdata: 2, //每页返回显示的数据条数
+            pageSize: 2, //每页返回显示的数据条数
             pagetype: "server",//分页方式：clients， 服务端：server 
-            queryParms: "",//服务器的参数，如果是server 会默认发送 默认limit:当前页面, offset:查询的条数
+            queryParms: {},//服务器的参数，如果是server 会默认发送 默认limit:当前页面, offset:查询的条数
             jumpbool: true,//是否显示用户输入跳转
             bendbool: true, //是否显示首尾页显示
+            setFilds:{//自定义当前页码字段，返回数据个数字段
+            	pageNum:"",
+            	pageSize:""
+            },
             callback: function(){},
             noData: false, //开启无数据测试，
             onClick:function(){}
         }
        
         $.extend(true, setting, options || {})
-        var counts = 0;//总页数
+        var counts = 0;//总数
         var resData = [];//数据返回
-        var pageCount = 1;//初始化为1，页数
+        var pageCount = 1;//初始化为1，页数;
+        var pageNumField = setting[setting.setFilds["pageNum"]]?setting.setFilds["pageNum"]:"currPage";
+        var pageSizeField =setting[setting.setFilds["pageSize"]]? setting.setFilds["pageSize"]:"resultdata";
+       
+        var currPage = setting[pageNumField]; //当前页；
+        var pageSize = setting[pageSizeField];//每一页返回个数;
+       	
+       	
+        if (setting.pagetype == 'server') {
+            setting.queryParms[pageNumField] = currPage;
+            setting.queryParms[pageSizeField] = pageSize
+        }
+        
+        console.log(setting.queryParms)
         var fn = {
+
              //start  初始化判断 
             restart:function(){
             	//服务端请求发送的参数get
             	if (setting.pagetype == 'server') {
-		            setting.queryParms = $.extend(true, { limit: setting.currPage, offset: setting.resultdata }, options.queryParms || {});
+		            setting.queryParms[pageNumField] = currPage;
+		            setting.queryParms[pageSizeField] = pageSize
 		        }
-                //入口初始化判断是否是url是请求地址 字符串
+            	console.log(setting.queryParms)
+               //入口初始化判断是否是url是请求地址 字符串
                  if (typeof setting.url == "string") {
                  		 $.ajax({
-                            type: "get",
+                            type: setting.type,
                             url: setting.url,
                             data: setting.queryParms,
                             success: function (result) {
@@ -70,22 +91,22 @@
             //初始化数据处理
             init: function () {
 				//判断当前页码数
-                if (setting.currPage <= 0) {
-                    setting.currPage = 1;
+                if (currPage <= 0) {
+                    currPage = 1;
                 }
                 //判断、重置页码数
                 if (setting.sPageSun == 0) {
-                    setting.currPage = 1;
+                    currPage = 1;
                 }
                 //计算页数
                 if (counts > 0) {
                     //页数=总数/显示的条数
-                    pageCount = counts % setting.resultdata > 0 ? parseInt(counts / setting.resultdata) + 1 : parseInt(counts / setting.resultdata)
+                    pageCount = counts % pageSize > 0 ? parseInt(counts / pageSize) + 1 : parseInt(counts / pageSize)
 
                 };
                 //如果设置设置的当前页小于总页数,默认当前页为最后一页
-                if (setting.currPage >= pageCount) {
-                    setting.currPage = pageCount
+                if (currPage >= pageCount) {
+                    currPage = pageCount
                 }
                 //如果计算出的页数小于显示页码数(差数sPageSun)，那么sPageSun=计算出的页数
                 if (pageCount < setting.sPageSun) {
@@ -99,8 +120,8 @@
             setpageview: function () {//参数为数据
                 //计算页数
                 //上一页prevpage,下一页:nextpage
-                var prevpge = setting.currPage - 1;
-                var nextpage = parseInt(setting.currPage) + parseInt(1);
+                var prevpge = currPage - 1;
+                var nextpage = parseInt(currPage) + parseInt(1);
                 var prePageClass = "pageItem";
                 var nextPageClass = "pageItem";
                 var itemClass = "pageItem";
@@ -116,7 +137,7 @@
                 }
 
                 //标记页数，用来循环页数id开始-中间-结束
-                var pageunm = setting.currPage - parseInt(setting.sPageSun / 2);
+                var pageunm = currPage - parseInt(setting.sPageSun / 2);
                 if (pageunm <= 0) {
                     pageunm = 1
                 }
@@ -134,7 +155,7 @@
                 for (var i = 0; i < setting.sPageSun; i++) {
                     var addpage = pageunm++;
                     var itemPageClass = "pageItem";
-                    if (addpage == setting.currPage) {
+                    if (addpage == currPage) {
                         itemPageClass = "pageItemActive";
                     }
                     addEle += "<li class='" + itemPageClass + "' page-data = '" + addpage + "'>" + addpage + "</li>";
@@ -156,7 +177,7 @@
             //点击事件
             eventPage: function () {
                 self.find("li[class = 'pageItem']").on("click", function () {
-                    setting.currPage = $(this).attr("page-data");
+                    currPage = $(this).attr("page-data");
                     var resobj = Object.assign({}, setting);
                     fn.restart();
                     setting.onClick(resobj);
@@ -167,7 +188,7 @@
                 function yanzheg(obj) {
                     var reg = /^[1-9][0-9]*$/;
                     //跳转页验证:要填写正整数，不能大于总页数，不能等于当前页
-                    if (reg.test(obj.val()) && obj.val() <= pageCount && obj.val() != setting.currPage) {
+                    if (reg.test(obj.val()) && obj.val() <= pageCount && obj.val() != currPage) {
                         return true
                     } else {
                         obj.val("");
@@ -185,7 +206,7 @@
                    self.find("#btnval").blur();
                     var bool = yanzheg(self.find("#btnval"));
                     if (bool) {
-                        setting.currPage = self.find("#btnval").val();
+                        currPage = self.find("#btnval").val();
                        fn.restart();
                     }
                 })
@@ -199,10 +220,10 @@
                     data = resData;
                     var resulet = null;           
                     //判断是否是最后一页
-                    if (setting.currPage == pageCount) {
-                        resulet = data.slice((setting.currPage - 1) * setting.resultdata, data.length);
+                    if (currPage == pageCount) {
+                        resulet = data.slice((currPage - 1) * pageSize, data.length);
                     } else {
-                        resulet = data.slice((setting.currPage - 1) * setting.resultdata, setting.currPage * setting.resultdata);
+                        resulet = data.slice((currPage - 1) * pageSize, currPage * pageSize);
 
                     }
                     if(!resulet||resulet.length==0){

@@ -27,10 +27,16 @@
 		$(function(){
 			$("#page").myPage({
 				url:"data/data.json",
-				currPage:1,
-				sPageSun:100,
-				resultdata:3,
-				pagetype: "clients",
+				type:"get",
+				pageNums:1,
+				sPageSun:6,
+				pageSize:3,
+				setFilds:{//自定义当前页码字段，返回数据个数字段
+	            	pageNum:"pageNum",
+	            	pageSize:"pageSize"
+	            },
+				
+//				pagetype: "clients",
 				jumpbool:true,
 				bendbool:true,
 				callback:function(result){
