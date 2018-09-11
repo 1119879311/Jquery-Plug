@@ -7,42 +7,80 @@
 	</head>
 	
 	<body>
-		<ul class="page" id="page"></ul>
+		<div class="pageination" id="page"></div>
+		<br />
+		
+		<div>
+			<div class="pageination" id="page2"></div>
+		</div>
+		<br />
+		
+		
+		<div>
+			<div class="pageination" id="page3"></div>
+		</div>
 	</body>
 	<script src="js/jquery.min.js"></script>
 	<script src="js/Jquery-myPage.js"></script>
 	<script>
-//	 url: undefined,//数据,ajax请求数据路径
-//  currPage: 2,//当前页码,
-//  sPageSun: 6,//最多显示页面码数
-//  resultdata: 2, //每页返回显示的数据条数
-//  pagetype: "server",//分页方式：客户端clients， 服务端：server 
-//  queryParms: "",//服务器的参数，如果是server 会默认发送 默认limit:当前页面, offset:查询的条数
-//  jumpbool: true,//是否显示用户输入跳转
-//  bendbool: true, //是否显示首尾页显示
-//  callback: function(){},
-//  noData: false, //开启无数据测试，
-//  onClick:function(){}
-	
-		$(function(){
-			$("#page").myPage({
-				url:"data/data.json",
-				type:"get",
-				pageNums:1,
-				sPageSun:6,
-				pageSize:3,
-				setFilds:{//自定义当前页码字段，返回数据个数字段
-	            	pageNum:"pageNum",
-	            	pageSize:"pageSize"
-	            },
-				
-//				pagetype: "clients",
-				jumpbool:true,
-				bendbool:true,
-				callback:function(result){
-					console.log(result)
+			//示例1；不做ajax发送请求,
+			var page = new pageination($("#page"),{
+				pageNum:1,
+				pageSize:6,
+				sPageNum:20,
+				isNextPrex:true,
+				isBeel:true,
+				isInput:true,
+				isPageCount:true,
+				isTotals:true,
+				changeEven:function(res){
+					console.log(this)
+					console.log(res)
 				}
-			})
-		})
-	</script>
+			});
+			//示例2；做ajax发送请求,直接返回后台分页数据
+			var page2 = new pageination($("#page2"),{
+				pageNums:1,//用了自定义字段
+				pageSizes:7,//用了自定义字段
+				isNextPrex:true,
+				isBeel:true,
+				isInput:true,
+				isPageCount:true,
+				isTotals:true,
+				setAjaxFilds:{
+					pageNumField:"pageNums",//配置对应的自定义字段名称
+            		pageSizeField:"pageSizes",//配置对应的自定义字段名称
+            		url:"data/data.json",
+            		restotalField:['counts'],//必填参数
+				},
+				changeEven:function(res){
+					console.log(this)
+					console.log(res)
+				}
+			});
+			
+			//示例3；做ajax发送请求,后台一次性返回所有数据，由前端 做分页数据处理 
+			var page3 = new pageination($("#page3"),{
+				pageNums:1,//用了自定义字段
+				pageSizes:7,//用了自定义字段
+				isNextPrex:true,
+				isBeel:true,
+				isInput:true,
+				isPageCount:true,
+				isTotals:true,
+				setAjaxFilds:{
+					pageNumField:"pageNums",//配置对应的自定义字段名称
+            		pageSizeField:"pageSizes",//配置对应的自定义字段名称
+            		url:"data/data.json",
+            		restotalField:['counts'],//必填参数
+            		resDataField:["data"],//必填参数
+				    clients:true 
+				},
+				changeEven:function(res){
+					console.log(this)
+					console.log(res)
+				}
+			});
+			
+		</script>
 </html>

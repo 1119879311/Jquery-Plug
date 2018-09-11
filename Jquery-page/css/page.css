@@ -1,33 +1,36 @@
-.page{
+.pageination{
     list-style: none;
+    display: inline-block;
+    overflow: auto;
+   
 }
-.page>li{
+.pageination>div{
     float: left;
     padding: 5px 10px;
     cursor: pointer;
 }
-.page .pageItem{
+.pageination .pageItem{
     border: solid thin #DDDDDD;
     margin: 5px;
 }
-.page .pageItemActive{
+.pageination .pageItemActive{
     border: solid thin #0099FF;
     margin: 5px;
     background-color: #0099FF;
     color:white;
 }
-.page .pageItem:hover{
+.pageination .pageItem:hover{
     border: solid thin #0099FF;
     background-color: #0099FF;
     color:white;
 }
-.page .pageItemDisable{
+.pageination .pageItemDisable{
     border: solid thin #DDDDDD;
     margin: 5px;
     background-color: #DDDDDD;
 }
 
-.page .inpval,.page button{
+.pageination .inpval,.pageination button{
 	display: inline-block;
 	width: 30px;
 	height: 30px;
@@ -36,10 +39,18 @@
 	border: solid thin #DDDDDD;
 	outline: none;
 }
-.page button{
+.pageination button{
 	display: inline-block;
 	margin-left: 5px;
 	width: 33px;
 	height: 33px;
 	cursor: pointer;
+}
+.pageination .page-counts,.pageination .page-totals{
+	 line-height: 32px;
+	 background:#0099FF ;
+	 color: #fff;
+	 padding: 1px 8px;
+	 margin-left: 5px;
+	 margin-top: 5px;
 }
