@@ -3,7 +3,7 @@
 		if(!dom) return 
 		var _this = this;
 	    this.dom = dom;
-		this.config = Object.assign({
+		this.config = $.extend({
 			pageNum:1,//当前页码数 （如果后台指定的字段不一样，可在setAjaxFilds 中设置pageSizeField的字段名称）
 			pageSize:6,//每页的返回的数据 （如果后台指定的字段不一样，可在setAjaxFilds 中设置pageSizeField的字段名称）
 			sPageNum:3,//显示的页码列表个数
@@ -17,14 +17,15 @@
 				url:"",	//必填，请求地址
 				type:"get",//必填，请求类型
 				data:{}, //可选，设置请求参数
-				header:{},//可选，设置请求头信息						
+				headers:{},//可选，设置请求头信息						
 				pageNumField:"",//可选，自定义页码数，该字段将作为 data 参数转给后台，替换默认页码数pageNum
 				pageSizeField:"",//可选，自定义每个页数据的字段，该字段将作为 data 参数转给后台,替换默认页个数 pageSize
 				restotalField:[], //必填,后台返回的totats 总数 ，获取 的字段名称， 如返回结果 {code:200,result:{totals:100,content:[]}}, 写法为：["result","totals"]
 				resDataField:[],//可选，后台返回的 content 的数据 ，获取 的字段名称,返回类型是数组， 用法与restotalField 参数一样；
 				clients:false //后台是否一次性返回所有数据，又前端做数据分页处理，如果为true,resDataField参数为必填;
 			},
-			changeEven:function(){} //分页点击事件回调，返回结果是分页数据
+			changeEven:function(){}, //分页点击事件
+			success:function(){}//回调，返回结果是分页数据
 		},option)
 		
 		
@@ -120,16 +121,20 @@
 		
 	}
 	
+	
+	
 	//渲染页码列表
 	pageination.prototype.setPageList = function(){
 		
 		var _this = this;
 		if(_this.config.sPageNum<1) return "";
-		
-   		 //标记页数，用来循环页数id开始-中间-结束
-   		 var aNum = _this.config.pageNum - parseInt(_this.config.sPageNum/2);
+		//关键：
+  		// 标记页数，用来循环页数开始-中间-结束   ; 计算渲染页码的起始数
+   		 var aNum = _this.config.pageNum - parseInt(_this.config.sPageNum/2);//页码起始数 = 当前页 - 显示页面个数(最大为总页数) 除以 2 
+   		 //如果起始数小于或等于0，默认起始为1
    		 aNum = aNum<=0?1:aNum;
-        if (parseInt(aNum + _this.config.sPageNum) > _this.pageCount) {
+   		 //情况三： 如果起始页+页码列表个数 >总页码
+        if (parseInt(aNum + _this.config.sPageNum) > _this.pageCount) {//如果 起始数+渲染页码列表个数>总页面；页码起始数 = 总页码- 页码列表个数+1
             aNum = _this.pageCount - _this.config.sPageNum + 1;
         }
      
@@ -162,11 +167,11 @@
 		var _this = this;
 		_this.dom.find("div[class = '"+_this.itmePageClass+"']").on("click",function(){
 			 _this.config.pageNum = $(this).attr("page-data");
+			 _this.config.changeEven(_this.config.pageNum)
 		   if(_this.config.setAjaxFilds.url){
 		    	_this.getAjax({pageNum:_this.config.pageNum})
 		   }else{
 		   	 _this.setInit();
-		   	 _this.config.changeEven(_this.config)
 		   }
 		})
 		
@@ -177,12 +182,15 @@
 		
 		_this.dom.find("#page-btns").on("click",function(){
 			var res = inputReg();
-			if(res&&_this.config.setAjaxFilds&&_this.config.setAjaxFilds.url){
-				_this.getAjax({pageNum:res})
-			}else if(res){
-				 _this.config.pageNum = res;
-				_this.setInit();
+			if(!res) {return false}
+			 _this.config.pageNum = res;
+			 _this.config.changeEven(_this.config.pageNum);
+			if(_this.config.setAjaxFilds&&_this.config.setAjaxFilds.url){
+				_this.getAjax({pageNum:res});
+				return false
 			}
+			
+			_this.setInit();
 		})
 		
 		function inputReg(){
@@ -194,8 +202,6 @@
 		 	}
 		 	return dom.val();
 		}
-		
-		
 		
 	}
 	
@@ -212,18 +218,17 @@
 		_this.config[pageNumField] = _this.config.pageNum;
 		config.data[pageNumField] = _this.config.pageNum;
 		config.data[pageSizeField] = _this.config.pageSize;
-		
 		$.ajax({
 			type:config.type,
 			url:config.url,
 			data:config.data,
-			header:config.header,
+			headers:config.header,
 			async:true,
 			success:function(res){
 				_this.resultData(res);
 			},
 			error:function(error){
-				_this.config.changeEven(error)
+				_this.config.success(error)
 			}
 		});				
 	}
@@ -232,38 +237,31 @@
 		var _this = this;
 		var config = _this.config.setAjaxFilds;
 		//如果没有总数，直接返回null
-		if(!config.restotalField) {return   _this.config.changeEven({status:false,errmsg:"miss option is restotalField"}) }
+		if(!config.restotalField) {return   _this.config.success({status:false,errmsg:"miss option is restotalField"}) }
 		//获取总数
-		var restotal  = data[config.restotalField[0]];
-		for (var i =1;i<restotal.length;i++) {
-		  	var  restotal = restotal[config.restotalField[i]];
-		}
-		_this.config.totals = restotal;
+		var restotal =_this.objEnd(data,config.restotalField);
+		_this.config.totals = restotal?restotal:0;
 		
 		//如果不是客户端总数处理
-		if(!config.clients||!config.resDataField||!config.resDataField[0]){
+		if(!config.clients){
 			_this.setInit();
-			_this.config.changeEven(data)
+			_this.config.success(data)
 			return 
 		}
 		_this.clients(data);
 	}
+
 	
 	pageination.prototype.clients = function(data){
 		var _this = this;
 		var config = _this.config.setAjaxFilds;
 		//获取返回数据
-		if(!config.resDataField) {return   _this.config.changeEven({status:false,errmsg:"miss option is resDataField"}) } 
-		var resData  = data[config.resDataField[0]];
+		if(!config.resDataField) {return   _this.config.success({status:false,errmsg:"miss option is resDataField"}) } ;
+		var resData  = _this.objEnd(data,config.resDataField);
+		if(!resData||resData.length<1){ return   _this.config.success({status:false,errmsg:"no data"})};
 		
-		if(_this.config.totals<resData.length);
 		_this.config.totals = resData.length;
-		
 		_this.setInit();
-		for (var i =1;i<config.resDataField.length;i++) {
-		  	var  resData = resData[config.resDataField[i]];
-		}
-		
 		//如果当前大于总数
 		if(_this.config.pageNum==_this.pageCount){
 		   var result = resData.slice((_this.config.pageNum - 1) * _this.config.pageSize, data.length);
@@ -271,8 +269,24 @@
 			var result = resData.slice((_this.config.pageNum - 1) * _this.config.pageSize, _this.config.pageNum*_this.config.pageSize);
 		}
 		
-		_this.config.changeEven({status:true,data:result})
+		_this.config.success({status:true,data:result})
 		
+	}
+	pageination.prototype.objEnd = function(obj,arrKeys){
+		var obj = obj||{};
+		var arrKeys = arrKeys||[];
+		var _this = this;
+		var val = obj[arrKeys[0]];
+		
+		if(!val) return false;
+		
+		for (var i =1;i<arrKeys.length;i++) {
+			var val = val[arrKeys[i]];
+			if(!val){
+				return val;
+			}
+		}
+		return val;
 	}
 	
 	pageination.prototype.getCurrentIndex = function(){
@@ -284,4 +298,4 @@
 	}
 	
 	window.pageination = pageination;
-})($);
+})($);	

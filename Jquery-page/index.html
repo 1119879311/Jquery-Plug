@@ -27,14 +27,13 @@
 			var page = new pageination($("#page"),{
 				pageNum:1,
 				pageSize:6,
-				sPageNum:20,
+				sPageNum:3,
 				isNextPrex:true,
 				isBeel:true,
 				isInput:true,
 				isPageCount:true,
 				isTotals:true,
 				changeEven:function(res){
-					console.log(this)
 					console.log(res)
 				}
 			});
@@ -54,7 +53,9 @@
             		restotalField:['counts'],//必填参数
 				},
 				changeEven:function(res){
-					console.log(this)
+					console.log(res)
+				},
+				success:function(res){
 					console.log(res)
 				}
 			});
@@ -77,7 +78,9 @@
 				    clients:true 
 				},
 				changeEven:function(res){
-					console.log(this)
+					console.log(res)
+				},
+				success:function(res){
 					console.log(res)
 				}
 			});
